@@ -1,7 +1,7 @@
 import sys
 
 if __name__ == "__main__":
-    filename = sys.argv[1]
+    filename = "input_1_1.txt"
 
     with open(filename, 'r') as f:
         lines = f.readlines()
