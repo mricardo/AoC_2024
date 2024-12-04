@@ -16,4 +16,3 @@ if __name__ == "__main__":
                 total += int(d1) * int(d2)
     
     print(total)
-
