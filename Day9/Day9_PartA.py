@@ -1,4 +1,3 @@
-
 def create_disk_layout(disk_map):
     disk_layout = []
     block_ids = 0
@@ -36,8 +35,6 @@ def rearrange_disk_layout(disk_layout):
 
     return disk_layout
 
-
-
 def calculate_checksum(rearranged_layout):
     checksum = 0
     for idx, block in enumerate(rearranged_layout):
@@ -57,5 +54,5 @@ if __name__ == "__main__":
     rearranged_layout = rearrange_disk_layout(disk_layout)
     print("Rearranged layout: ", ''.join(str(e) for e in rearranged_layout))
     checksum = calculate_checksum(rearranged_layout)
-    # 6310675819476
+
     print("Checksum: ", checksum)
