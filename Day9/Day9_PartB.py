@@ -23,7 +23,7 @@ def find_block(disk_layout, free_block, block_init):
 
     while idx + size < len(disk_layout) and idx+size <= block_init:
         check_block = disk_layout[idx:idx+size]
-        #print("Check block: ", check_block)
+
         if check_block == free_block:
             return idx
         idx += 1
@@ -43,12 +43,6 @@ def rearrange_disk_layout(disk_layout):
 
             free_block =  ['.'] * block_size
             found_block = find_block(disk_layout, free_block, block_init)
-
-            #print("Block init: ", block_init)
-            #print("Block size: ", block_size)
-            #print("Block list: ", block_list)
-            #print("Free block: ", free_block)
-            #print("Found block: ", found_block)
             
             if found_block != -1:
                 disk_layout[found_block:found_block+block_size] = block_list
