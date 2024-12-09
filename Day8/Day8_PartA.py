@@ -38,7 +38,7 @@ def set_antinodes(puzzle, antenas):
     return antinodes
 
 if __name__ == "__main__":
-    filename = "Day8_input.txt"
+    filename = "Day8_test.txt"
 
     puzzle = []
 
@@ -59,6 +59,6 @@ if __name__ == "__main__":
         #print("Antenas:" , antenas)
         antinodes = set_antinodes(puzzle, antenas)
         #print("Antinode: ", antinodes)
-        #print_puzzle(puzzle)
+        print_puzzle(puzzle)
 
         print("Antinodes: ", len(antinodes))
