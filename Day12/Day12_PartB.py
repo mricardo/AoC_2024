@@ -43,11 +43,9 @@ def greedy_mark_region(current_symbol, current_region, current_position, pos_to_
 
 def determine_perimeters(regions, puzzle):
     perimeters = {}
-    perimeter_positions = {}
      
     for region, positions in regions.items():
         perimeters[region] = 0        
-        perimeter_positions[region] = []
         symbol = puzzle[positions[0][0]][positions[0][1]]
         
         for p in positions:
@@ -60,9 +58,8 @@ def determine_perimeters(regions, puzzle):
 
             if perimeter > 0:
                 perimeters[region] += perimeter                
-                perimeter_positions[region].append(p)              
                     
-    return perimeters, perimeter_positions
+    return perimeters
 
 def determine_regions(puzzle):
     pos_to_regions = {}
@@ -83,7 +80,7 @@ def determine_regions(puzzle):
         i += 1
     
     return regions_to_pos
-    
+
 def count_sides(positions):
     sides = 0 
 
@@ -98,15 +95,19 @@ def count_sides(positions):
         east = (p[0], p[1] + 1)
         west = (p[0], p[1] - 1) 
 
+        # TOP SIDE
         if north not in positions and (west not in positions or north_west in positions):
             sides += 1
         
+        # BOTTOM SIDE
         if south not in positions and (west not in positions or south_west in positions):
             sides += 1
         
+        # LEFT SIDE 
         if west not in positions and (north not in positions or north_west in positions):
             sides += 1
         
+        # RIGHT SIDE
         if east not in positions and (north not in positions or north_east in positions):
             sides += 1
 
@@ -117,8 +118,6 @@ def determine_sides(regions_pos):
     
     for r in regions_pos.keys():
         positions = regions_pos[r]        
-        # sort by row then by column
-        positions = sorted(positions, key=lambda x : (x[0], x[1]))
         sides = count_sides(positions)
         sides_per_region[r] = sides
     
@@ -140,7 +139,7 @@ if __name__ == "__main__":
             puzzle.append(row)            
 
     regions = determine_regions(puzzle)
-    perimeters, perimeter_positions = determine_perimeters(regions, puzzle)
+    perimeters = determine_perimeters(regions, puzzle)
     sides = determine_sides(regions)
 
     total_price = 0
