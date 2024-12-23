@@ -83,44 +83,7 @@ def determine_regions(puzzle):
         i += 1
     
     return regions_to_pos
-
-def same_symbol(p, diagonal, puzzle):
-    if diagonal[0] < 0 or diagonal[1] < 0:
-        return False
-    if diagonal[0] >= len(puzzle) or diagonal[1] >= len(puzzle[0]):
-        return False
-
-    symbol = puzzle[p[0]][p[1]]
-
-    other_symbol = puzzle[diagonal[0]][diagonal[1]]
-
-    return symbol == other_symbol
-
-def not_all_in(check_p, positions):
-    total = 0
-    for p in check_p:
-        if p not in positions:
-            total += 1
-
-    return total == len(check_p)
-
-def is_all_in(check_p, positions):
-    total = 0
-    for p in check_p:
-        if p in positions:
-            total += 1
-
-    return total == len(check_p)
-
-def is_same_symbol(p, symbol, puzzle):
-    if p[0] < 0 or p[1] < 0:
-        return False
     
-    if p[0] >= len(puzzle) or p[1] >= len(puzzle[0]):
-        return False
-    
-    return puzzle[p[0]][p[1]] == symbol
-  
 def count_sides(positions):
     sides = 0 
 
