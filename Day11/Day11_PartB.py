@@ -1,49 +1,32 @@
+from itertools import count
+from logging import root
+from os import remove
 import sys
 import copy
 
-def run_rules(stone, current_blink, blinkings, cache):    
-    if current_blink >= blinkings:
-        return None 
+def apply_rules(stone):   
+    if stone == '0':
+        return ['1']      
+    elif len(stone) % 2 == 0:
+        half = int(len(stone) / 2)                   
+        return [str(int(stone[0:half])), str(int(stone[half:]))]
     
-    children = []
-    while (current_blink < blinkings):        
-        print("Current Blink: ", current_blink, " Stone: ", stone, " Cache: ", cache, "\n")                
-        input()
-        if stone in cache:
-            result = cache[stone]                       
-            if len(result) > (blinkings - current_blink):
-                return None
-        else:
-            cache[stone] = []
-        
-        if stone == '0':
-            next_stone = '1'
-            cache[stone].append(next_stone)
-            children = run_rules(next_stone, current_blink+1, blinkings, cache)            
-            if children:
-                cache[stone].append(children)
-        elif len(stone) % 2 == 0:
-            half = int(len(stone) / 2)
-                
-            left_stone = str(int(stone[0:half]))
-            right_stone = str(int(stone[half:]))
+    return [str(int(stone) * 2024)]
+    
+    
+def run_blinkings(root_node, blinkings):
+    count_map = {root_node: 1}  
+    current_blink = 0
 
-            cache[stone].append(left_stone)
-            children = run_rules(left_stone, current_blink+1, blinkings, cache)
-            if children:
-                cache[stone][len(cache[stone]-1)].append(children)
-            
-            cache[stone].append(right_stone)
-            children = run_rules(right_stone, current_blink+1, blinkings, cache)            
-            if children:
-                cache[stone][len(cache[stone]-1)].append(children)
-        else:                
-            next_stone = str(int(stone) * 2024)
-            cache[stone].append(next_stone)
-            children = run_rules(next_stone, current_blink+1, blinkings, cache)                   
-            if children:
-                cache[stone].append(children)
-    return children
+    while (current_blink < blinkings):
+        next_count_map = {}
+        for stone, count in count_map.items():
+            for new_stone in apply_rules(stone):
+                next_count_map[new_stone] = next_count_map.get(new_stone, 0) + count 
+        count_map = next_count_map
+        current_blink += 1
+
+    return sum(count_map.values())
 
 if __name__ == "__main__":
     filename = "Day11_test.txt"
@@ -53,7 +36,7 @@ if __name__ == "__main__":
         blinkings = int(sys.argv[1])
 
     if blinkings is None:
-        blinkings = 25
+        blinkings = 6
     
     print("Blinkings: ", blinkings)
 
@@ -64,11 +47,7 @@ if __name__ == "__main__":
 
         print("Stones: ", stones)
     
-    cache = {}
+    total_stones = 0
     for s in stones:
-        run_rules(s, 0, blinkings, cache)
-    
-    print("Cache: ", cache)
-    #print("Final stone arrangement: ", final_stone_arrangement)
-    # 185894
-    #print("Total stones: ", len(final_stone_arrangement))
+        total_stones += run_blinkings(str(s), blinkings)
+    print("Total stones: ", total_stones)
