@@ -2,13 +2,13 @@ import sys
 import re
 
 def print_puzzle(robots, wide, tall):
-    puzzle = [['.' for _ in range(wide)] for _ in range(tall)]
+    puzzle = [[0 for _ in range(wide)] for _ in range(tall)]
 
     for r in robots:
-        if puzzle[r[1]][r[0]] == '.':
-            puzzle[r[1]][r[0]] = '1'
+        if puzzle[r[1]][r[0]] == 0:
+            puzzle[r[1]][r[0]] = 1
         else:
-            puzzle[r[1]][r[0]] = str(int(puzzle[r[1]][r[0]]) + 1)
+            puzzle[r[1]][r[0]] += 1
     
     for p in puzzle:
         print(' '.join(p))
