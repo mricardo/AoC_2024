@@ -62,7 +62,6 @@ def a_star_search(graph, maze, start, goal):
             while current:
                 path.insert(0, current)
                 current = came_from[current]
-            
         
             return path, cost_so_far[last_goal]
 
