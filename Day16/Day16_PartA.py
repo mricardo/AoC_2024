@@ -1,3 +1,4 @@
+
 import heapq
 
 def update_maze(maze, path, start, goal):
@@ -20,10 +21,6 @@ def update_maze(maze, path, start, goal):
 def print_maze(maze):    
     for r in maze:
         print(*r, sep= " ")
-    
-def heuristic(a, b):
-    """Manhattan distance heuristic."""
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 def update_graph(graph, maze, current):
     if current not in graph:
@@ -45,7 +42,7 @@ def update_graph(graph, maze, current):
         if d != direction:
             graph[current][((i, j), d)] = 1000
         
-def a_star_search(graph, maze, start, goal):
+def dijsktra(graph, maze, start, goal):
     frontier = [(0, start)]
     came_from = {}
     cost_so_far = {}
@@ -70,10 +67,10 @@ def a_star_search(graph, maze, start, goal):
         for next in graph.get(current, []):
             new_cost = cost_so_far[current] + graph[current][next]
             if next not in cost_so_far or new_cost < cost_so_far[next]:
-                cost_so_far[next] = new_cost
-                priority = new_cost + heuristic(next[0], goal)
-                heapq.heappush(frontier, (priority, next))
+                cost_so_far[next] = new_cost                                
                 came_from[next] = current
+
+                heapq.heappush(frontier, (new_cost, next))
 
     return None, float('inf')  # No path found
 
@@ -105,7 +102,7 @@ if __name__ == "__main__":
     print("S Coord: ", s_coord)
     print("E Coord: ", e_coord)
     
-    path, cost = a_star_search({}, maze, (s_coord, "E"), e_coord)
+    path, cost = dijsktra({}, maze, (s_coord, "E"), e_coord)
     update_maze(maze, path, s_coord, e_coord)
     print_maze(maze)
     
