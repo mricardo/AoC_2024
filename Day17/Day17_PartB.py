@@ -29,13 +29,11 @@ def run_program(ip, output, program, registers):
 
     set_jump = False
 
-    if opcode == ADV:
-        numerator = registers[A]
-        denominator = 2 ** get_combo(operand, registers)
-        registers[A] = int(numerator / denominator)
+    if opcode == ADV:        
+        registers[A] >>= get_combo(operand, registers)
         
     if opcode == BXL:
-        registers[B] = registers[B] ^ operand
+        registers[B] ^= operand
             
     if opcode == BST:
         registers[B] = get_combo(operand, registers) % 8
@@ -45,21 +43,17 @@ def run_program(ip, output, program, registers):
         set_jump = True
 
     if opcode == BXC:
-        registers[B] = registers[B] ^ registers[C]
+        registers[B] ^= registers[C]
         
     if opcode == OUT:
         output.append(get_combo(operand, registers) % 8)
             
-    if opcode == BDV:
-        numerator = registers[A]
-        denominator = 2 ** get_combo(operand, registers)
-        registers[B] = int(numerator / denominator)
+    if opcode == BDV:        
+        registers[B] = registers[A] >> get_combo(operand, registers)
             
-    if opcode == CDV:
-        numerator = registers[A]
-        denominator = 2 ** get_combo(operand, registers)
-        registers[C] = int(numerator / denominator)
-    
+    if opcode == CDV:        
+        registers[C] = registers[A]  >> get_combo(operand, registers)
+
     return ip + 2 if not set_jump else ip
     
 def lowest_value_registerA(program, registers):    
