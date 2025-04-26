@@ -8,7 +8,7 @@ def get_neighbors(node, max_coord, obstacles):
         if 0 <= new_x <= max_coord and 0 <= new_y <= max_coord and (new_x, new_y) not in obstacles:
             yield (new_x, new_y)
 
-def bfs_distances(obstacles, start_node, max_coord):
+def bfs(obstacles, start_node, max_coord):
     distances = {start_node: 0}
     queue = deque([start_node])
 
@@ -34,7 +34,7 @@ for r, c in obstacles:
     if 0 <= r <= max_coord and 0 <= c <= max_coord:
         maze[c][r] = '#'
 
-distances = bfs_distances(set(corrupted_coordinates[:bytes_simulation]), start_node, max_coord)
+distances = bfs(set(corrupted_coordinates[:bytes_simulation]), start_node, max_coord)
 
 for r in range(max_coord + 1):
     for c in range(max_coord + 1):
