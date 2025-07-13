@@ -3,39 +3,26 @@ from collections import defaultdict
 
 DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
-def neighbors(graph, node, wall_cheats=None, reverse=False):
+def neighbors(graph, node):
     max_row = len(graph) - 1
     max_col = len(graph[0]) - 1
 
     row, col = node
 
     for dr, dc in DIRECTIONS:
-        if reverse: 
-            nr, nc = row - dr, col - dc 
-        else:
-            nr, nc = row + dr, col + dc
+        nr, nc = row + dr, col + dc
 
         if not (0 <= nr <= max_row and 0 <= nc <= max_col):
             continue
 
         new_node = (nr, nc)
 
-        can_cheat = False
-        if wall_cheats:
-            if reverse:
-                 for cheat_from, cheat_to in wall_cheats.items():
-                    if cheat_to == node and cheat_from == new_node:
-                        can_cheat = True
-                        break
-            else:
-                can_cheat = wall_cheats.get(node) == new_node
-
         is_wall = graph[nr][nc] == '#'
         
-        if not is_wall or can_cheat:
+        if not is_wall:
             yield new_node
 
-def dijkstra_all_distances(maze, start_node, walls_cheats=None, reverse=False):
+def dijkstra_all_distances(maze, start_node):
     all_distances = {start_node: 0}
     priority_queue = [(0, start_node)]
 
@@ -45,7 +32,7 @@ def dijkstra_all_distances(maze, start_node, walls_cheats=None, reverse=False):
         if distance_to_node > all_distances.get(node, float('inf')):
             continue
 
-        for to_neighbor in neighbors(maze, node, walls_cheats, reverse):
+        for to_neighbor in neighbors(maze, node):
             new_distance = distance_to_node + 1
 
             if new_distance < all_distances.get(to_neighbor, float('inf')):
@@ -69,9 +56,9 @@ with open("Day20/Day20_Input.txt", "r") as file:
             end = (r_idx, stripped_line.index('E'))
 
 distances_from_start = dijkstra_all_distances(graph, start)
-distances_to_end = dijkstra_all_distances(graph, end, reverse=True)
+distances_to_end = dijkstra_all_distances(graph, end)
 
-initial_min_time = distances_from_start.get(end)
+initial_time = distances_from_start.get(end)
 
 cheats_per_saved_time = defaultdict(int)
 processed_cheats = set()
@@ -87,43 +74,44 @@ WALL_CHEAT_OFFSETS = [
 rows = len(graph)
 cols = len(graph[0])
 
-for p_row in range(rows):
-    for p_col in range(cols):
-        node = (p_row, p_col)
+for r in range(rows):
+    for c in range(cols):
+        node = (r, c)
 
         # We only care about starting cheats from open cells
-        if graph[p_row][p_col] == '#':
+        if graph[r][c] == '#':
             continue
 
-        for dr1, dc1, dr2, dc2 in WALL_CHEAT_OFFSETS:
-            first_wall_pos = (p_row + dr1, p_col + dc1)
-            second_open_pos = (p_row + dr2, p_col + dc2)
+        for r1, c1, r2, c2 in WALL_CHEAT_OFFSETS:
+            wall = (r + r1, c + c1)
+            open_position = (r + r2, c + c2)
 
-            fw_row, fw_col = first_wall_pos
-            sw_row, sw_col = second_open_pos
+            wall_row, wall_col = wall
+            open_row, open_col = open_position
 
             is_in_bounds = all([
-                0 <= fw_row < rows,
-                0 <= fw_col < cols,
-                0 <= sw_row < rows,
-                0 <= sw_col < cols
+                0 <= wall_row < rows,
+                0 <= wall_col < cols,
+                0 <= open_row < rows,
+                0 <= open_col < cols
             ])
 
             if not is_in_bounds:
                 continue
 
-            is_first_wall_actual_wall = graph[fw_row][fw_col] == '#'
-            is_second_wall_not_wall = graph[sw_row][sw_col] != '#'
+            is_wall = graph[wall_row][wall_col] == '#'
+            is_open_position = graph[open_row][open_col] != '#'
 
-            if not (is_first_wall_actual_wall and is_second_wall_not_wall):
+            if not (is_wall and is_open_position):
                 continue
 
             cheat_from_node = node
-            cheat_to_node = second_open_pos
+            cheat_to_node = open_position
 
             cheat_key = (cheat_from_node, cheat_to_node)
             if cheat_key in processed_cheats:
                 continue
+
             processed_cheats.add(cheat_key)
 
             start_to_cheat = distances_from_start.get(cheat_from_node, float('inf'))
@@ -135,15 +123,14 @@ for p_row in range(rows):
 
             cheat_time = start_to_cheat + 1 + end_to_cheat
 
-            if cheat_time < initial_min_time:
-                saved_time = initial_min_time - cheat_time
+            if cheat_time < initial_time:
+                saved_time = initial_time - cheat_time
                 cheats_per_saved_time[saved_time] += 1
 
 print("\nDistances per cheat:")
-total_cheats_100 = 0
+total_cheats_50 = 0
 for saved_time, total_cheats in sorted(cheats_per_saved_time.items()):
     if saved_time >= 100:
-        total_cheats_100 += total_cheats
-    print(f"There {'are' if total_cheats > 1 else 'is'} {total_cheats} cheats that save {saved_time} picoseconds.") 
-
-print(f"Total cheats that save more than 100 picoseconds: {total_cheats_100}")
+        total_cheats_50 += total_cheats
+  
+print(f"Total cheats that save more than 50 picoseconds: {total_cheats_50}")
